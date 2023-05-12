@@ -16,6 +16,7 @@ public class Util {
     public static Connection getConnection() {
         try {
             connection = DriverManager.getConnection(url, username, password);
+            connection.setAutoCommit(false);
         } catch (SQLException e) {
             System.out.println("Ошибка");
         }

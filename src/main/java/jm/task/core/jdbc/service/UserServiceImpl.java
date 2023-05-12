@@ -17,11 +17,11 @@ public class UserServiceImpl implements UserService {
         uD.dropUsersTable();
     }
 
-    public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         uD.saveUser(name, lastName, age);
     }
 
-    public void removeUserById(long id) {
+    public void removeUserById(long id) throws SQLException {
         uD.removeUserById(id);
     }
 
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         return uD.getAllUsers();
     }
 
-    public void cleanUsersTable() {
+    public void cleanUsersTable() throws SQLException {
         uD.cleanUsersTable();
     }
 }

@@ -30,6 +30,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
         try (Statement st = connection.createStatement()) {
             st.executeUpdate(CREATE);
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Не удалось создать таблицу");
@@ -38,32 +39,37 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Statement st = connection.createStatement()) {
-            st.execute(DROP);
+            st.executeUpdate(DROP);
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Не удалось удалить таблицу");
         }
     }
 
-    public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(SAVE)) {
             ps.setString(1, name);
             ps.setString(2, lastName);
             ps.setByte(3, age);
             ps.executeUpdate();
+            connection.commit();
 
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.rollback();
             System.out.println("Не удалось добавить юзера");
         }
     }
 
-    public void removeUserById(long id) {
+    public void removeUserById(long id) throws SQLException {
         try(PreparedStatement ps = connection.prepareStatement(DELETE)) {
             ps.setLong(1,id);
             ps.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.rollback();
             System.out.println("Не удалось удалить User по id");
         }
     }
@@ -72,6 +78,7 @@ public class UserDaoJDBCImpl implements UserDao {
         List<User> allUsers = new ArrayList<>();
         try(PreparedStatement ps = connection.prepareStatement(SELECTALL)) {
             ResultSet resultSet = ps.executeQuery(SELECTALL);
+            connection.commit();
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getLong("id"));
@@ -87,11 +94,13 @@ public class UserDaoJDBCImpl implements UserDao {
         return allUsers;
     }
 
-    public void cleanUsersTable() {
+    public void cleanUsersTable() throws SQLException {
         try(PreparedStatement ps = connection.prepareStatement(CLEAR)) {
             ps.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.rollback();
             System.out.println("Не удалось очистить таблицу");
         }
     }
